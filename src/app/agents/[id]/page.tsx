@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AGENT_PROFILES } from "@/lib/agents";
 
@@ -60,9 +59,9 @@ async function AgentPage({ params }: { params: Promise<{ id: string }> }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <main className="min-h-screen bg-[var(--bg)] text-[var(--cream)]">
         <article className="mx-auto max-w-5xl px-6 py-32 md:px-12 lg:px-20">
-          <Link href={asset("/")} className="mb-8 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
+          <a href={asset("/")} className="mb-8 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
             ← Back to Ecosystem
-          </Link>
+          </a>
           <div className="mb-12 flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10">
             <div className="relative h-64 w-64 flex-shrink-0 overflow-hidden rounded-3xl sm:h-80 sm:w-80" style={{ boxShadow: `0 24px 80px rgba(${agent.rgb},0.25)` }}>
               <Image src={asset(agent.image)} alt={agent.name} fill className="h-full w-full object-cover" priority />
@@ -102,7 +101,7 @@ async function AgentPage({ params }: { params: Promise<{ id: string }> }) {
                   const partner = AGENT_PROFILES.find((a) => a.id === w);
                   return (
                     <li key={w}>
-                      <Link href={asset(`/agents/${w}`)} className="flex items-center gap-2 rounded-full border border-white/10 bg-[var(--bg2)] px-3 py-1 text-xs font-medium transition-colors hover:border-white/20" style={{ color: partner?.color ?? "var(--muted)" }}>{partner?.name ?? w}</Link>
+                      <a href={asset(`/agents/${w}`)} className="flex items-center gap-2 rounded-full border border-white/10 bg-[var(--bg2)] px-3 py-1 text-xs font-medium transition-colors hover:border-white/20" style={{ color: partner?.color ?? "var(--muted)" }}>{partner?.name ?? w}</a>
                     </li>
                   );
                 })}
