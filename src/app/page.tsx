@@ -11,6 +11,8 @@ import {
 } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 
+import { AGENT_PROFILES, type AgentProfile } from "@/lib/agents";
+
 const GH = "https://github.com/Thatisshayan/AlphonsoEcosystem";
 const RELEASE = "v2.0.0";
 const RELEASE_DATE = "June 2026";
@@ -22,65 +24,8 @@ function asset(path: string) {
   return `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-const PRIMARY = [
-  {
-    id: "jose",
-    name: "Jose",
-    title: "ORCHESTRATOR",
-    color: "#F5B535",
-    rgb: "245,181,53",
-    image: "/agents/jose.png",
-    abilities: ["Route & Coordinate", "Plan & Delegate", "Monitor & Adapt", "Confirm & Report"],
-    desc: "Routes, assigns, merges, and confirms every mission so the crew stays aligned.",
-  },
-  {
-    id: "alphonso",
-    name: "Alphonso",
-    title: "EXECUTION AGENT",
-    color: "#00C8E0",
-    rgb: "0,200,224",
-    image: "/agents/alphonso.png",
-    abilities: ["Strategize", "Align", "Delegate", "Execute"],
-    desc: "Runs tasks, verifies output, and packages deliverables before anything ships.",
-  },
-  {
-    id: "miya",
-    name: "Miya",
-    title: "CREATIVE AGENT",
-    color: "#B060FF",
-    rgb: "176,96,255",
-    image: "/agents/miya.png",
-    abilities: ["Create", "Design", "Write", "Inspire"],
-    desc: "Turns briefs into scripts, storyboards, strategy, and export-ready creative.",
-  },
-  {
-    id: "marcus",
-    name: "Marcus",
-    title: "DISTRIBUTION AGENT",
-    color: "#3ED464",
-    rgb: "62,212,100",
-    image: "/agents/marcus.png",
-    abilities: ["Distribute", "Amplify", "Engage", "Analyze"],
-    desc: "Moves approved content across YouTube, Telegram, WhatsApp, and Meta.",
-  },
-  {
-    id: "maria",
-    name: "Maria",
-    title: "GOVERNANCE AGENT",
-    color: "#B0B8C0",
-    rgb: "176,184,192",
-    image: "/agents/maria.png",
-    abilities: ["Govern", "Verify", "Audit", "Ensure"],
-    desc: "Keeps audit trails, risk scoring, and approval gates active at every step.",
-  },
-];
-
-const SUPPORT = [
-  { id: "hector", name: "Hector", title: "Research Agent", color: "#52CBA0", rgb: "82,203,160", image: "/agents/hector.png" },
-  { id: "echo", name: "Echo", title: "Memory Agent", color: "#60B8E8", rgb: "96,184,232", image: "/agents/echo.png" },
-  { id: "sentinel", name: "Sentinel", title: "Security Agent", color: "#FF6060", rgb: "255,96,96", image: "/agents/sentinel.png" },
-  { id: "nova", name: "Nova", title: "Intelligence Agent", color: "#FFD040", rgb: "255,208,64", image: "/agents/nova.png" },
-];
+const PRIMARY = AGENT_PROFILES.filter((agent) => ["jose", "alphonso", "miya", "marcus", "maria"].includes(agent.id));
+const SUPPORT = AGENT_PROFILES.filter((agent) => !PRIMARY.map((item) => item.id).includes(agent.id));
 
 const PILLARS = [
   { label: "Local-First", desc: "Your data never leaves your machine.", icon: "local" },
@@ -107,7 +52,7 @@ function useFade(amount = 0.1) {
 
 function BrandLogo({ size = 38, full = false }: { size?: number; full?: boolean }) {
   if (full) {
-    return <Image src={asset("/logo.webp")} alt="Alphonso logo" width={150} height={150} className="h-9 w-auto object-contain" />;
+    return <Image src={asset("/logo.png")} alt="Alphonso logo" width={165} height={48} className="h-8 w-auto object-contain" />;
   }
 
   return <Image src={asset("/logo-transparent.png")} alt="" width={size} height={size} className="h-9 w-9 object-contain" />;
@@ -340,51 +285,16 @@ function Pillars() {
   );
 }
 
-function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof SUPPORT)[number]; index: number }) {
+function AgentCard({ agent, index }: { agent: AgentProfile; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [imgOk, setImgOk] = useState(false);
   const [supportImgOk, setSupportImgOk] = useState(false);
   const [ref, inView] = useFade(0.05);
   const reduceMotion = useReducedMotion();
-  const isPrimary = "abilities" in agent;
+const isPrimary = "abilities" in agent;
 
-  if (!isPrimary) {
-    return (
-      <motion.div
-        key={agent.id}
-        initial={{ opacity: 0, x: -8 }}
-        animate={inView ? { opacity: 1, x: 0 } : {}}
-        transition={{ delay: 0.5 + index * 0.07 }}
-        className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 px-3 py-2"
-      >
-        <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-white/8 bg-[var(--bg)]">
-          <Image src={asset(agent.image)} alt="" width={32} height={32} className={`h-full w-full object-cover transition-opacity duration-300 ${supportImgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setSupportImgOk(true)} onError={() => setSupportImgOk(false)} />
-          {!supportImgOk && <div className="absolute inset-0 flex items-center justify-center font-display text-xs font-extrabold" style={{ color: agent.color }}>{agent.name[0]}</div>}
-        </div>
-        <div>
-          <div className="font-display text-sm font-bold" style={{ color: agent.color }}>{agent.name}</div>
-          <div className="text-[10px] font-medium text-[var(--muted)]">{agent.title}</div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.07, duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border transition-all duration-300"
-      style={{
-        background: hovered ? `rgba(${agent.rgb},0.07)` : "var(--bg2)",
-        borderColor: hovered ? `rgba(${agent.rgb},0.5)` : "rgba(255,255,255,0.07)",
-        transform: hovered && !reduceMotion ? "translateY(-6px)" : "translateY(0)",
-        boxShadow: hovered ? `0 16px 60px rgba(${agent.rgb},0.18)` : "none",
-      }}
-    >
+  const cardContent = isPrimary ? (
+    <>
       <div className="h-1 bg-gradient-to-r" style={{ background: `linear-gradient(90deg,${agent.color},transparent)`, opacity: hovered ? 0.9 : 0.3 }} />
       <div className="relative flex h-36 items-center justify-center overflow-hidden" style={{ background: `linear-gradient(160deg,rgba(${agent.rgb},0.08) 0%,#0C110D 100%)` }}>
         <Image src={asset(agent.image)} alt={agent.name} fill className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ${imgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setImgOk(true)} onError={() => setImgOk(false)} />
@@ -411,6 +321,33 @@ function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof
         </div>
         <div className="border-t border-white/5 pt-3 text-xs leading-5 text-[var(--dim)]">{agent.desc}</div>
       </div>
+    </>
+  ) : (
+    <>
+      <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-white/8 bg-[var(--bg)]">
+        <Image src={asset((agent as AgentProfile).image)} alt="" width={32} height={32} className={`h-full w-full object-cover transition-opacity duration-300 ${supportImgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setSupportImgOk(true)} onError={() => setSupportImgOk(false)} />
+        {!supportImgOk && <div className="absolute inset-0 flex items-center justify-center font-display text-xs font-extrabold" style={{ color: (agent as AgentProfile).color }}>{(agent as AgentProfile).name[0]}</div>}
+      </div>
+      <div>
+        <div className="font-display text-sm font-bold" style={{ color: (agent as AgentProfile).color }}>{(agent as AgentProfile).name}</div>
+        <div className="text-[10px] font-medium text-[var(--muted)]">{(agent as AgentProfile).title}</div>
+      </div>
+    </>
+  );
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={isPrimary ? { opacity: 0, y: 30 } : { opacity: 0, x: -8 }}
+      animate={inView ? (isPrimary ? { opacity: 1, y: 0 } : { opacity: 1, x: 0 }) : {}}
+      transition={isPrimary ? { delay: index * 0.07, duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] } : { delay: 0.5 + index * 0.07 }}
+      {...(isPrimary ? { onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) } : {})}
+      className={isPrimary ? "flex cursor-pointer flex-col overflow-hidden rounded-2xl border transition-all duration-300" : "flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 px-3 py-2"}
+      style={isPrimary ? { background: hovered ? `rgba(${agent.rgb},0.07)` : "var(--bg2)", borderColor: hovered ? `rgba(${agent.rgb},0.5)` : "rgba(255,255,255,0.07)", transform: hovered && !reduceMotion ? "translateY(-6px)" : "translateY(0)", boxShadow: hovered ? `0 16px 60px rgba(${agent.rgb},0.18)` : "none" } : {}}
+    >
+      <a href={asset(`/agents/${agent.id}`)} className={isPrimary ? "flex flex-col h-full w-full" : "flex items-center gap-3"} aria-label={`View ${agent.name} profile`}>
+        {cardContent}
+      </a>
     </motion.div>
   );
 }
@@ -544,7 +481,7 @@ function MissionCTA() {
   return (
     <section className="px-6 pb-24 md:px-12 lg:px-20">
       <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }} className="relative flex min-h-[340px] flex-col justify-end overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)]">
-        <Image src={asset("/ALPHONSO_THUMBNAIL.webp")} alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-[center_22%] opacity-30" />
+        <Image src={asset("/cta-banner.png")} alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-[center_50%] opacity-35" />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/55 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] to-transparent" />
         <div className="pointer-events-none absolute left-[38%] top-[35%] h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(158,240,26,0.05)_0%,transparent_70%)]" />
@@ -585,9 +522,9 @@ function VideoShowcase() {
 
   return (
     <section id="video" className="px-6 pb-24 pt-10 md:px-12 lg:px-20">
-      <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.7 }} className="overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)] shadow-[0_0_80px_rgba(158,240,26,0.08)]">
-        <div className="grid gap-0 lg:grid-cols-[0.95fr_2fr]">
-          <div className="flex flex-col justify-center p-8 md:p-10">
+      <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.7 }} className="mx-auto max-w-6xl overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)] shadow-[0_0_80px_rgba(158,240,26,0.08)]">
+        <div className="grid gap-0 lg:grid-cols-[0.85fr_1.45fr]">
+          <div className="flex flex-col justify-center p-6 md:p-8">
             <div className="mb-4 flex items-center gap-3 font-display text-[10px] font-bold tracking-[3px] uppercase text-[var(--lime)]">
               <div className="h-px w-5 bg-[var(--lime)]" />Mission Preview
             </div>
@@ -597,9 +534,9 @@ function VideoShowcase() {
               Download {RELEASE}
             </a>
           </div>
-          <div className="relative min-h-[320px] bg-black">
+          <div className="relative min-h-[240px] bg-black md:min-h-[280px]">
             <video
-              src={asset("/video/alphonso-preview.mp4")}
+              src={asset("/video/alphonso-preview-hq.mp4")}
               controls
               autoPlay
               muted
@@ -620,7 +557,7 @@ function Footer() {
     <footer className="border-t border-lime/8 px-6 pb-8 pt-10 md:px-12 lg:px-20">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-5 border-b border-white/5 pb-6">
         <div className="flex items-center gap-3">
-          <BrandLogo size={34} />
+          <Image src={asset("/footer-logo.png")} alt="Alphonso footer logo" width={165} height={45} className="h-8 w-auto object-contain" />
           <div>
             <div className="font-display text-sm font-extrabold tracking-[1px] uppercase text-[var(--cream)]">Alphonso Ecosystem</div>
             <div className="mt-1 text-xs font-medium text-[var(--dim)]">One ecosystem, Infinite impact. Execute. Engage. Deliver.</div>
