@@ -14,12 +14,49 @@ export async function generateStaticParams() {
   return AGENT_PROFILES.map((agent) => ({ id: agent.id }));
 }
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const agent = AGENT_PROFILES.find((a) => a.id === params.id);
+  if (!agent) return {};
+  const title = `${agent.name} — ${agent.title} | Alphonso Ecosystem`;
+  const description = agent.role;
+  const url = `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${agent.id}/`;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [{ url: asset(agent.image) }],
+    },
+    alternates: {
+      canonical: url,
+    },
+  };
+}
+
 function AgentPage({ params }: { params: { id: string } }) {
   const agent = AGENT_PROFILES.find((a) => a.id === params.id);
   if (!agent) notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: agent.name,
+    jobTitle: agent.title,
+    url: `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${agent.id}/`,
+    image: `https://thatisshayan.github.io/kilo-claude-landing-page${agent.image}`,
+    description: agent.role,
+    worksFor: {
+      "@type": "Organization",
+      name: "Alphonso Ecosystem",
+    },
+  };
+
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--cream)]">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main className="min-h-screen bg-[var(--bg)] text-[var(--cream)]">
       <article className="mx-auto max-w-5xl px-6 py-32 md:px-12 lg:px-20">
         <Link href={asset("/")} className="mb-8 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
           ← Back to Ecosystem
@@ -80,15 +117,16 @@ function AgentPage({ params }: { params: { id: string } }) {
             <pre className="whitespace-pre-wrap rounded-xl border border-white/6 bg-[var(--bg2)] p-5 text-xs leading-relaxed text-[var(--muted)]">{agent.workflow}</pre>
           </section>
 
-          <section className="rounded-2xl border border-white/6 bg-gradient-to-br from-[var(--bg2)] to-transparent p-8 text-center">
+<section className="rounded-2xl border border-white/6 bg-gradient-to-br from-[var(--bg2)] to-transparent p-8 text-center">
             <h3 className="mb-3 font-display text-xl font-bold" style={{ color: agent.color }}>Ready to work with {agent.name}?</h3>
             <p className="mb-5 text-sm text-[var(--muted)]">Download Alphonso and experience local-first AI execution.</p>
             <a href={GH} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-bold text-[var(--bg)] transition-opacity hover:opacity-90" style={{ background: agent.color }}>Get Started</a>
           </section>
         </div>
-      </article>
-    </main>
-  );
-}
+        </article>
+        </main>
+      </>
+    );
+  }
 
 export default AgentPage;
