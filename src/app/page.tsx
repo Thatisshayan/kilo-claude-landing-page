@@ -58,6 +58,18 @@ function BrandLogo({ size = 38, full = false }: { size?: number; full?: boolean 
   return <Image src={asset("/logo-transparent.png")} alt="" width={size} height={size} className="h-9 w-9 object-contain" />;
 }
 
+function ThemeToggle() {
+  const [dark, setDark] = useState(true);
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+  }, [dark]);
+  return (
+    <a href="#theme-toggle" onClick={(e) => { e.preventDefault(); setDark(!dark); }} className="cursor-pointer rounded-lg border border-white/8 px-2 py-1 text-sm font-medium text-[var(--muted)] transition-colors hover:text-[var(--cream)]" aria-label="Toggle dark mode">
+      {dark ? '☀️' : '🌙'}
+    </a>
+  );
+}
+
 function HexShape({ size = 44, glow = false }: { size?: number; glow?: boolean }) {
   return (
     <svg
@@ -161,6 +173,8 @@ function Nav() {
         >
           Download {RELEASE}
         </a>
+
+        <ThemeToggle />
       </div>
     </motion.nav>
   );
@@ -297,7 +311,7 @@ const isPrimary = "abilities" in agent;
     <>
       <div className="h-1 bg-gradient-to-r" style={{ background: `linear-gradient(90deg,${agent.color},transparent)`, opacity: hovered ? 0.9 : 0.3 }} />
       <div className="relative flex h-36 items-center justify-center overflow-hidden" style={{ background: `linear-gradient(160deg,rgba(${agent.rgb},0.08) 0%,#0C110D 100%)` }}>
-        <Image src={asset(agent.image)} alt={agent.name} fill className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ${imgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setImgOk(true)} onError={() => setImgOk(false)} />
+        <Image src={asset(agent.image)} alt={agent.name} fill loading="lazy" className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ${imgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setImgOk(true)} onError={() => setImgOk(false)} />
         {!imgOk && (
           <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border font-display text-4xl font-extrabold" style={{ background: `radial-gradient(circle at 40% 35%,rgba(${agent.rgb},0.35),rgba(${agent.rgb},0.06))`, borderColor: `rgba(${agent.rgb},0.3)`, color: agent.color }}>
             {agent.name[0]}
@@ -341,7 +355,19 @@ const isPrimary = "abilities" in agent;
       initial={isPrimary ? { opacity: 0, y: 30 } : { opacity: 0, x: -8 }}
       animate={inView ? (isPrimary ? { opacity: 1, y: 0 } : { opacity: 1, x: 0 }) : {}}
       transition={isPrimary ? { delay: index * 0.07, duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] } : { delay: 0.5 + index * 0.07 }}
-      {...(isPrimary ? { onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) } : {})}
+      onMouseEnter={() => {
+        setHovered(true);
+        if (isPrimary) {
+          const link = document.querySelector(`link[rel="prefetch"][href*="/agents/${agent.id}/"]`) as HTMLLinkElement;
+          if (!link) {
+            const l = document.createElement('link');
+            l.rel = 'prefetch';
+            l.href = asset(`/agents/${agent.id}`);
+            document.head.appendChild(l);
+          }
+        }
+      }}
+      onMouseLeave={() => setHovered(false)}
       className={isPrimary ? "flex cursor-pointer flex-col overflow-hidden rounded-2xl border transition-all duration-300" : "flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 px-3 py-2"}
       style={isPrimary ? { background: hovered ? `rgba(${agent.rgb},0.07)` : "var(--bg2)", borderColor: hovered ? `rgba(${agent.rgb},0.5)` : "rgba(255,255,255,0.07)", transform: hovered && !reduceMotion ? "translateY(-6px)" : "translateY(0)", boxShadow: hovered ? `0 16px 60px rgba(${agent.rgb},0.18)` : "none" } : {}}
     >
