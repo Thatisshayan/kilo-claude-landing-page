@@ -1,12 +1,17 @@
 import Link from "next/link";
 
 const RELEASE = "v2.0.0";
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function asset(path: string) {
+  return `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+}
 
 export default function GettingStartedPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-6 py-32 text-[var(--cream)] md:px-12 lg:px-20">
       <article className="mx-auto max-w-4xl">
-        <Link href="/docs" className="mb-6 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
+        <Link href={asset("/docs")} className="mb-6 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
           ← Back to docs
         </Link>
         <p className="mb-3 font-display text-[10px] font-bold tracking-[3px] text-[var(--lime)] uppercase">Getting Started</p>

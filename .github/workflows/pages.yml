@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   build:
+    env:
+      NEXT_PUBLIC_BASE_PATH: /kilo-claude-landing-page
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

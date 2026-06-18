@@ -16,6 +16,11 @@ const RELEASE = "v2.0.0";
 const RELEASE_DATE = "June 2026";
 const REL = `${GH}/releases/tag/${RELEASE}`;
 const DOCS = `${GH}/blob/main/docs`;
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function asset(path: string) {
+  return `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+}
 
 const PRIMARY = [
   {
@@ -102,10 +107,10 @@ function useFade(amount = 0.1) {
 
 function BrandLogo({ size = 38, full = false }: { size?: number; full?: boolean }) {
   if (full) {
-    return <Image src="/logo.webp" alt="Alphonso logo" width={150} height={150} className="h-9 w-auto object-contain" />;
+    return <Image src={asset("/logo.webp")} alt="Alphonso logo" width={150} height={150} className="h-9 w-auto object-contain" />;
   }
 
-  return <Image src="/logo-transparent.png" alt="" width={size} height={size} className="h-9 w-9 object-contain" />;
+  return <Image src={asset("/logo-transparent.png")} alt="" width={size} height={size} className="h-9 w-9 object-contain" />;
 }
 
 function HexShape({ size = 44, glow = false }: { size?: number; glow?: boolean }) {
@@ -184,7 +189,7 @@ function Nav() {
         </a>
 
         <div className="hidden items-center gap-7 md:flex">
-          {[["Agents", "#agents"], ["Pipeline", "#pipeline"], ["Privacy", "#privacy"], ["Video", "#video"], ["Docs", "/docs"]].map(([label, href]) => (
+          {[["Agents", "#agents"], ["Pipeline", "#pipeline"], ["Privacy", "#privacy"], ["Video", "#video"], ["Docs", asset("/docs")]].map(([label, href]) => (
             <a
               key={label}
               href={href}
@@ -257,7 +262,7 @@ function Hero() {
             <a href={REL} target="_blank" rel="noopener noreferrer" className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-[var(--lime)] px-6 py-3 font-display font-extrabold text-sm text-black shadow-[0_0_50px_rgba(158,240,26,0.4)] transition-all duration-200 hover:bg-[var(--lime-hi)] hover:-translate-y-0.5">
               Download {RELEASE}
             </a>
-            <a href="/docs/ground-truth" className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-white/12 px-5 py-3 font-display text-sm font-semibold text-[var(--cream)] transition-all duration-200 hover:border-white/28 hover:bg-white/4">
+            <a href={asset("/docs/ground-truth")} className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-white/12 px-5 py-3 font-display text-sm font-semibold text-[var(--cream)] transition-all duration-200 hover:border-white/28 hover:bg-white/4">
               Read Ground Truth
             </a>
           </motion.div>
@@ -291,7 +296,7 @@ function Hero() {
           ))}
 
           <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)] shadow-[0_0_100px_rgba(158,240,26,0.06),0_50px_100px_rgba(0,0,0,0.8)]">
-            <Image src="/ALPHONSO_THUMBNAIL.webp" alt="The Alphonso Crew — 9 specialized AI agents" fill className="h-full w-full object-cover object-[center_22%]" />
+            <Image src={asset("/ALPHONSO_THUMBNAIL.webp")} alt="The Alphonso Crew — 9 specialized AI agents" fill className="h-full w-full object-cover object-[center_22%]" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--bg)]/70 via-transparent to-[var(--bg)]/85" />
             <div className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full border border-lime/20 bg-black/75 px-4 py-2 backdrop-blur-xl">
               <span className="h-2 w-2 rounded-full bg-[var(--lime)]" style={{ animation: "pulse-live 2s ease-in-out infinite" }} />
@@ -353,7 +358,7 @@ function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof
         className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 px-3 py-2"
       >
         <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-white/8 bg-[var(--bg)]">
-          <Image src={agent.image} alt="" width={32} height={32} className={`h-full w-full object-cover transition-opacity duration-300 ${supportImgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setSupportImgOk(true)} onError={() => setSupportImgOk(false)} />
+          <Image src={asset(agent.image)} alt="" width={32} height={32} className={`h-full w-full object-cover transition-opacity duration-300 ${supportImgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setSupportImgOk(true)} onError={() => setSupportImgOk(false)} />
           {!supportImgOk && <div className="absolute inset-0 flex items-center justify-center font-display text-xs font-extrabold" style={{ color: agent.color }}>{agent.name[0]}</div>}
         </div>
         <div>
@@ -382,7 +387,7 @@ function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof
     >
       <div className="h-1 bg-gradient-to-r" style={{ background: `linear-gradient(90deg,${agent.color},transparent)`, opacity: hovered ? 0.9 : 0.3 }} />
       <div className="relative flex h-36 items-center justify-center overflow-hidden" style={{ background: `linear-gradient(160deg,rgba(${agent.rgb},0.08) 0%,#0C110D 100%)` }}>
-        <Image src={agent.image} alt={agent.name} fill className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ${imgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setImgOk(true)} onError={() => setImgOk(false)} />
+        <Image src={asset(agent.image)} alt={agent.name} fill className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ${imgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setImgOk(true)} onError={() => setImgOk(false)} />
         {!imgOk && (
           <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border font-display text-4xl font-extrabold" style={{ background: `radial-gradient(circle at 40% 35%,rgba(${agent.rgb},0.35),rgba(${agent.rgb},0.06))`, borderColor: `rgba(${agent.rgb},0.3)`, color: agent.color }}>
             {agent.name[0]}
@@ -539,7 +544,7 @@ function MissionCTA() {
   return (
     <section className="px-6 pb-24 md:px-12 lg:px-20">
       <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }} className="relative flex min-h-[340px] flex-col justify-end overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)]">
-        <Image src="/ALPHONSO_THUMBNAIL.webp" alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-[center_22%] opacity-30" />
+        <Image src={asset("/ALPHONSO_THUMBNAIL.webp")} alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-[center_22%] opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/55 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] to-transparent" />
         <div className="pointer-events-none absolute left-[38%] top-[35%] h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(158,240,26,0.05)_0%,transparent_70%)]" />
@@ -555,7 +560,7 @@ function MissionCTA() {
             <a href={REL} target="_blank" rel="noopener noreferrer" className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-[var(--lime)] px-5 py-3 font-display font-extrabold text-sm text-black shadow-[0_0_40px_rgba(158,240,26,0.4)] transition-all duration-200 hover:bg-[var(--lime-hi)] hover:-translate-y-0.5">
               Join the Mission
             </a>
-            <a href="/docs/roadmap" className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-white/15 px-5 py-3 font-display text-sm font-semibold text-[var(--cream)] transition-colors duration-200 hover:border-white/30">
+            <a href={asset("/docs/roadmap")} className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-white/15 px-5 py-3 font-display text-sm font-semibold text-[var(--cream)] transition-colors duration-200 hover:border-white/30">
               View Roadmap
             </a>
           </div>
@@ -594,13 +599,13 @@ function VideoShowcase() {
           </div>
           <div className="relative min-h-[320px] bg-black">
             <video
-              src="/video/alphonso-preview.mp4"
+              src={asset("/video/alphonso-preview.mp4")}
               controls
               autoPlay
               muted
               loop
               playsInline
-              poster="/ALPHONSO_THUMBNAIL.webp"
+              poster={asset("/ALPHONSO_THUMBNAIL.webp")}
               className="h-full w-full object-cover"
             />
           </div>
@@ -622,7 +627,7 @@ function Footer() {
           </div>
         </div>
         <div className="flex flex-wrap gap-6">
-          {[["GitHub", GH], ["Releases", `${GH}/releases`], ["Docs", "/docs"], ["Architecture", "/docs/architecture"], ["CLAUDE.md", `${GH}/blob/main/CLAUDE.md`]].map(([label, href]) => (
+          {[["GitHub", GH], ["Releases", `${GH}/releases`], ["Docs", asset("/docs")], ["Architecture", asset("/docs/architecture")], ["CLAUDE.md", `${GH}/blob/main/CLAUDE.md`]].map(([label, href]) => (
             <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener noreferrer" : undefined} className="cursor-pointer text-sm font-medium text-[var(--dim)] transition-colors duration-200 hover:text-[var(--lime)]">{label}</a>
           ))}
         </div>

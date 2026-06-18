@@ -2,6 +2,11 @@ import Link from "next/link";
 
 const GH = "https://github.com/Thatisshayan/AlphonsoEcosystem";
 const RELEASE = "v2.0.0";
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function asset(path: string) {
+  return `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+}
 
 const docs = [
   {
@@ -35,7 +40,7 @@ export default function DocsPage() {
     <main className="min-h-screen bg-[var(--bg)] px-6 py-32 text-[var(--cream)] md:px-12 lg:px-20">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
-          <Link href="/" className="mb-6 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
+          <Link href={asset("/")} className="mb-6 inline-flex text-sm font-medium text-[var(--lime)] hover:text-[var(--lime-hi)]">
             ← Back to landing page
           </Link>
           <p className="mb-3 font-display text-[10px] font-bold tracking-[3px] text-[var(--lime)] uppercase">Documentation</p>
@@ -47,7 +52,7 @@ export default function DocsPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           {docs.map((doc) => (
-            <Link key={doc.title} href={doc.href} className="group rounded-2xl border border-white/7 bg-[var(--bg2)] p-6 transition hover:-translate-y-1 hover:border-lime/20 hover:bg-white/[0.025]">
+            <Link key={doc.title} href={asset(doc.href)} className="group rounded-2xl border border-white/7 bg-[var(--bg2)] p-6 transition hover:-translate-y-1 hover:border-lime/20 hover:bg-white/[0.025]">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <span className="rounded-full border border-lime/15 bg-lime/[0.04] px-3 py-1 font-mono text-xs text-[var(--lime)]">{RELEASE}</span>
                 <span className="text-sm text-[var(--dim)] transition group-hover:text-[var(--lime)]">Open →</span>
