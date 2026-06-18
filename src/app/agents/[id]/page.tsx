@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   if (!agent) return {};
   const title = `${agent.name} — ${agent.title} | Alphonso Ecosystem`;
   const description = agent.role;
-  const url = `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${agent.id}/`;
+  const url = `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${params.id}/`;
   return {
     title,
     description,
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       title,
       description,
       url,
-      images: [{ url: asset(agent.image) }],
+      images: [{ url: agent.image }],
     },
     alternates: {
       canonical: url,
