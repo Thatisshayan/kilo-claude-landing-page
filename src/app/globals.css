@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    @apply m-0 p-0 box-border;
+  }
+
+  :root {
+    --bg: #060A07;
+    --bg2: #0C110D;
+    --bg3: #111814;
+    --lime: #9EF01A;
+    --lime-hi: #B5FF35;
+    --limed: rgba(158, 240, 26, 0.1);
+    --cream: #EDEEE6;
+    --muted: #56625A;
+    --dim: #1E281F;
+    --line: rgba(255, 255, 255, 0.07);
+    --lineg: rgba(158, 240, 26, 0.12);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    @apply bg-[var(--lime)] text-black;
+  }
+}
+
+@layer utilities {
+  .dot-grid {
+    background-image: radial-gradient(rgba(158, 240, 26, 0.055) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(158, 240, 26, 0.5); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(158, 240, 26, 0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  @keyframes scanline {
+    0% { top: -2%; }
+    100% { top: 102%; }
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
