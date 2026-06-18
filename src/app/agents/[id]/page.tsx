@@ -15,11 +15,12 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const agent = AGENT_PROFILES.find((a) => a.id === params.id);
+  const { id } = params;
+  const agent = AGENT_PROFILES.find((a) => a.id === id);
   if (!agent) return {};
   const title = `${agent.name} — ${agent.title} | Alphonso Ecosystem`;
   const description = agent.role;
-  const url = `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${params.id}/`;
+  const url = `https://thatisshayan.github.io/kilo-claude-landing-page/agents/${id}/`;
   return {
     title,
     description,
@@ -35,8 +36,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-function AgentPage({ params }: { params: { id: string } }) {
-  const agent = AGENT_PROFILES.find((a) => a.id === params.id);
+async function AgentPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const agent = AGENT_PROFILES.find((a) => a.id === id);
   if (!agent) notFound();
 
   const jsonLd = {
