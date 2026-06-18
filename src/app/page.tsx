@@ -71,10 +71,10 @@ const PRIMARY = [
 ];
 
 const SUPPORT = [
-  { id: "hector", name: "Hector", title: "Research Agent", color: "#52CBA0", rgb: "82,203,160" },
-  { id: "echo", name: "Echo", title: "Memory Agent", color: "#60B8E8", rgb: "96,184,232" },
-  { id: "sentinel", name: "Sentinel", title: "Security Agent", color: "#FF6060", rgb: "255,96,96" },
-  { id: "nova", name: "Nova", title: "Intelligence Agent", color: "#FFD040", rgb: "255,208,64" },
+  { id: "hector", name: "Hector", title: "Research Agent", color: "#52CBA0", rgb: "82,203,160", image: "/agents/hector.png" },
+  { id: "echo", name: "Echo", title: "Memory Agent", color: "#60B8E8", rgb: "96,184,232", image: "/agents/echo.png" },
+  { id: "sentinel", name: "Sentinel", title: "Security Agent", color: "#FF6060", rgb: "255,96,96", image: "/agents/sentinel.png" },
+  { id: "nova", name: "Nova", title: "Intelligence Agent", color: "#FFD040", rgb: "255,208,64", image: "/agents/nova.png" },
 ];
 
 const PILLARS = [
@@ -146,46 +146,6 @@ function PillarIcon({ name }: { name: string }) {
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
       {icons[name]}
     </svg>
-  );
-}
-
-function TrailerGate() {
-  const reduceMotion = useReducedMotion();
-  const [done, setDone] = useState(reduceMotion === true);
-
-  if (done) return null;
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-[var(--bg)]"
-      >
-        <video
-          src="/video/alphonso-preview.mp4"
-          autoPlay
-          muted
-          loop={false}
-          playsInline
-          poster="/ALPHONSO_THUMBNAIL.webp"
-          className="h-full w-full object-cover"
-          onEnded={() => setDone(true)}
-          onError={() => setDone(true)}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/70" />
-        <div className="absolute bottom-8 left-1/2 flex w-[calc(100%-32px)] max-w-xl -translate-x-1/2 items-center justify-between gap-4 rounded-2xl border border-lime/15 bg-black/70 px-5 py-4 text-center backdrop-blur-xl">
-          <div className="text-left">
-            <div className="font-display text-sm font-extrabold tracking-[2px] text-[var(--lime)] uppercase">Alphonso Ecosystem</div>
-            <div className="mt-1 text-xs font-medium leading-5 text-[var(--muted)]">Watch the mission trailer before entering.</div>
-          </div>
-          <button type="button" onClick={() => setDone(true)} className="cursor-pointer rounded-lg bg-[var(--lime)] px-5 py-2.5 font-display text-sm font-extrabold text-black transition hover:bg-[var(--lime-hi)]">
-            Skip
-          </button>
-        </div>
-      </motion.div>
-    </AnimatePresence>
   );
 }
 
@@ -331,7 +291,7 @@ function Hero() {
           ))}
 
           <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)] shadow-[0_0_100px_rgba(158,240,26,0.06),0_50px_100px_rgba(0,0,0,0.8)]">
-            <Image src="/ALPHONSO_THUMBNAIL.webp" alt="The Alphonso Crew — 9 specialized AI agents" fill className="h-full w-full object-cover" />
+            <Image src="/ALPHONSO_THUMBNAIL.webp" alt="The Alphonso Crew — 9 specialized AI agents" fill className="h-full w-full object-cover object-[center_22%]" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--bg)]/70 via-transparent to-[var(--bg)]/85" />
             <div className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full border border-lime/20 bg-black/75 px-4 py-2 backdrop-blur-xl">
               <span className="h-2 w-2 rounded-full bg-[var(--lime)]" style={{ animation: "pulse-live 2s ease-in-out infinite" }} />
@@ -378,6 +338,7 @@ function Pillars() {
 function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof SUPPORT)[number]; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [imgOk, setImgOk] = useState(false);
+  const [supportImgOk, setSupportImgOk] = useState(false);
   const [ref, inView] = useFade(0.05);
   const reduceMotion = useReducedMotion();
   const isPrimary = "abilities" in agent;
@@ -389,12 +350,15 @@ function AgentCard({ agent, index }: { agent: (typeof PRIMARY)[number] | (typeof
         initial={{ opacity: 0, x: -8 }}
         animate={inView ? { opacity: 1, x: 0 } : {}}
         transition={{ delay: 0.5 + index * 0.07 }}
-        className="flex items-center gap-2 rounded-lg border border-white/6 bg-white/2 px-3 py-2"
+        className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 px-3 py-2"
       >
-        <div className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: agent.color, boxShadow: `0 0 7px ${agent.color}` }} />
+        <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-white/8 bg-[var(--bg)]">
+          <Image src={agent.image} alt="" width={32} height={32} className={`h-full w-full object-cover transition-opacity duration-300 ${supportImgOk ? "opacity-100" : "opacity-0"}`} onLoad={() => setSupportImgOk(true)} onError={() => setSupportImgOk(false)} />
+          {!supportImgOk && <div className="absolute inset-0 flex items-center justify-center font-display text-xs font-extrabold" style={{ color: agent.color }}>{agent.name[0]}</div>}
+        </div>
         <div>
           <div className="font-display text-sm font-bold" style={{ color: agent.color }}>{agent.name}</div>
-          <div className="text-[10px] font-medium text-[var(--dim)]">{agent.title}</div>
+          <div className="text-[10px] font-medium text-[var(--muted)]">{agent.title}</div>
         </div>
       </motion.div>
     );
@@ -575,7 +539,7 @@ function MissionCTA() {
   return (
     <section className="px-6 pb-24 md:px-12 lg:px-20">
       <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }} className="relative flex min-h-[340px] flex-col justify-end overflow-hidden rounded-3xl border border-lime/12 bg-[var(--bg2)]">
-        <Image src="/ALPHONSO_THUMBNAIL.webp" alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-top opacity-30" />
+        <Image src="/ALPHONSO_THUMBNAIL.webp" alt="Be Part of Something Bigger" fill className="absolute inset-0 h-full w-full object-cover object-[center_22%] opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/55 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] to-transparent" />
         <div className="pointer-events-none absolute left-[38%] top-[35%] h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(158,240,26,0.05)_0%,transparent_70%)]" />
@@ -677,7 +641,6 @@ function Footer() {
 export default function App() {
   return (
     <>
-      <TrailerGate />
       <Nav />
       <main>
         <Hero />
